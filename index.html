@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="/public/img/ico_48.ico">
+    <link rel="shortcut icon" href="./public/img/ico_48.ico">
     <meta name="keywords" content="手机号查询,个人博客" />
     <meta name="description" content="阿尔维奇的技术博客，手机号查询与AirBlog均为王振北的作品"/>
 
-
-    <link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./public/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./public/pluge/sweet-alert/sweetalert.css">
     <!--[if lt IE 9]>
     <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -17,6 +17,8 @@
     <title>手机号查询</title>
     <style>
         #search{margin-top: 1rem;}
+        #find-phone{display: none;}
+        #find-phone-footer{position: fixed;bottom:30px;text-align: center;}
     </style>
 </head>
 <body>
@@ -24,15 +26,15 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-12">
-            <form action="{:U('Home/Search/index')}" method="post"  role="search" id="search">
-                <div class="input-group">
-                    <input type="text" name="key_word" required class="form-control" placeholder="telephone number">
-                    <span class="input-group-btn">
-                        <button class="btn btn-success" type="submit"><span class="glyphicon glyphicon-search"></span></button>
-                    </span>
-                </div>
-            </form>
-            <table class="table table-striped">
+            <h4 class="text-center">手机号码归属地查询</h4>
+            <div class="input-group" id="search">
+                <input type="text" name="key_word" required class="form-control" id="phone-number" placeholder="telephone number">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" id="sub-phone"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+
+            <table class="table table-striped" id="find-phone">
                 <thead>
                     <tr>
                         <th>名称</th>
@@ -42,29 +44,65 @@
                 <tbody>
                     <tr>
                         <td>手机号码</td>
-                        <td>13891052193</td>
+                        <td id="phone-no">13891052193</td>
                     </tr>
                     <tr>
                         <td>归属地</td>
-                        <td>Mumbai</td>
+                        <td id="province">陕西</td>
                     </tr>
                     <tr>
                         <td>运营商</td>
-                        <td>Mumbai</td>
+                        <td id="catName">中国移动</td>
                     </tr>
                     <tr>
-                        <td>其他</td>
-                        <td>Mumbai</td>
+                        <td >其他</td>
+                        <td id="msg">由AirBlog提供数据</td>
                     </tr>
                 </tbody>
             </table>
+            
+            <footer id="find-phone-footer">
+                友情链接: <a class="btn btn-success btn-xs" href="http://www.dear521.com/" target="_blank">AirBlog</a>
+            </footer>
         </div>
     </div>
 </div>
 
 
 
-
+<script src="./public/js/jquery-2.1.1.min.js"></script>
+<script src="./public/pluge/sweet-alert/sweet-alert.min.js"></script>
+<!--<script src="./public/js/mobile.js"></script>-->
+<script>
+    $(function(){
+        $('#phone-number').focus(function(){
+            $('#find-phone').hide();
+        });
+        $('#sub-phone').click(function(){
+            phone_number   = $.trim($('#phone-number').val());
+            if(phone_number.length != 11){swal('非法操作','','error'); return; }
+            var regx = /^1[3578]\d{9}$/;
+            if(!regx.test(phone_number)){swal('非法操作','','error'); return;}
+            $.ajax({
+                type:'post',
+                url:'./api.php',
+                data:{
+                    'phone_number': phone_number
+                },
+                dataType:"json",
+                success:function(data){
+                    if(0 == data.code){ swal(data.mess,'','error');return; }
+                    $('#find-phone').show();
+                    $('#phone-no').html(data.data.telString);
+                    $('#province').html(data.data.province);
+                    $('#catName').html(data.data.catName);
+                    $('#msg').html(data.data.msg);
+                    return;
+                },
+            });
+        });
+    });
+</script>
 
 </body>
 </html>
