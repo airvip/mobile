@@ -3,7 +3,7 @@
 
 * use taobao api.
 
-* 数据落盘存储在 Mysql 中。
+* mobile 是一个发现手机号归属地的程序。
 
-* 使用的是淘宝的API
+* 使用的是淘宝的API。
 
