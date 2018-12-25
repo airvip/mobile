@@ -1,7 +1,4 @@
 # mobile
-* mobile is a find telephone number's progrem.
-
-* use taobao api.
 
 * mobile 是一个发现手机号归属地的程序。
 
